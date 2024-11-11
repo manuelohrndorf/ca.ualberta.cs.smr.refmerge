@@ -1,4 +1,7 @@
-/build/
-/gradle/
-/.idea/
-/.gradle/
+# IntelliJ IDEA
+.idea/
+*.iml
+
+# Gradle
+.gradle/
+build/
