@@ -12,29 +12,53 @@ We consider the interactions between each pair of refactorings and how these int
 * Java 8
 * IntelliJ (Community Addition) Version 2020.1.2
 
-## How to run
+## (Optionally) Build RefactoringMiner
+
+You can either build the RefactoringMiner or download it automatically as [Maven dependency](https://mvnrepository.com/artifact/com.github.tsantalis/refactoring-miner). To build RefactoringMiner locally:
+
+- Current RefactoringMiner version required for RefMerge: 2.1.0
+- Requires to [install Maven](https://maven.apache.org/download.cgi) and add it's `bin` folder to the OS's `PATH` variable.
 
 ### 1. Clone and build RefactoringMiner 
-Use `Git Clone https://github.com/tsantalis/RefactoringMiner.git` to clone RefactoringMiner. 
+Use `Git Clone https://github.com/tsantalis/RefactoringMiner.git` to clone RefactoringMiner.
+Check out the required version with `git fetch --tags` and `git checkout tags/2.0.1` (see version requirement above or in the `build.gradle` file).
 Then build RefactoringMiner with `./gradlew distzip`. It will be under build/distributions.
 
 ### 2. Add RefactoringMiner to your local maven repository
-You will need to add RefactoringMiner to your local maven repository to
-use it in the build.gradle. You can use `mvn install:install-file -Dfile=<path-to-file>`
-to add it to your local maven repository. You can verify that it's been installed 
-by checking the path `/home/username/.m2/repository/org/refactoringminer`.
+You will need to add RefactoringMiner to your local maven repository to use it in the build.gradle. You can use `mvn install:install-file -Dfile=<path-to-file> -DgroupId=com.github.tsantalis -DartifactId=refactoring-miner -Dversion=2.1.0 -Dpackaging=zip -DgeneratePom=true`
+to add it to your local maven repository. You can verify that it's been installed  by checking the path `/home/username/.m2/repository/org/refactoringminer`.
+
+## How to run
+
+### 1. Download and install IntelliJ
+From [download and install IntelliJ IDE](https://www.jetbrains.com/de-de/idea/download/other.html) version 2024.1 (Community Edition).
 
 ### 3. Build the project
-Click on build tab in the IntelliJ IDE and select `Build Project` to build RefMerge.
+
+- Requires (Java 17)[https://adoptium.net/de/temurin/releases/?version=17].
+
+Open the repository folder in the IntelliJ IDE.
+Click on Gradle build tab (icon right-side) in the IntelliJ IDE.
+It may take a second until the build configuration is loaded.
+Then navigate to `RefMerge > Tasks > intellij` and select `buildPlugin` to build RefMerge.
 
 ### 4. Set up configuration
-Edit the configuration and under environment variables, set `LEFT_COMMIT` to the respective left
-commit and set `RIGHT_COMMIT` to the respective right commit. RefMerge will merge the two commits provided for a single merge scenario. This works for any merge scenario in history. We need to add the commits in the configuration under environment variables because RefMerge is currently designed as `AnAction` which cannot retrieve command line variables. This works when running the evaluation pipeline because an `ApplicationStarter` calls RefMerge supplying the commits.
-
+Then navigate to `RefMerge > Tasks > intellij` and right-click `runIde`.
+From the menu select `Modify Run Configuration...`.
+Edit the environment variables, set `LEFT_COMMIT=<commit id>,RIGHT_COMMIT=<commit id>` to the respective left and right commit. 
+RefMerge will merge the two commits provided for a single merge scenario. This works for any merge scenario in history. 
+We need to add the commits in the configuration under environment variables because RefMerge is currently designed as `AnAction` which cannot retrieve command line variables. 
+This works when running the evaluation pipeline because an `ApplicationStarter` calls RefMerge supplying the commits.
 
 ### 5. Run the plugin
-Click `Run 'Plugin'` or `Debug 'Plugin'`. When it's running, click the `Tools` tab and select
-`RunRefMerge`. This will run the plugin. The plugin will do everything else. RefMerge performs the following steps: 
+Then navigate to `RefMerge > Tasks > intellij` and right-click `runIde`.
+From the menu select `Run...` or `Debug...` to start a second IntelliJ instance.
+In debugging mode you can set break points in the source code.
+
+When it's running, click the `Tools` tab and select `RunRefMerge`. 
+This will run the plugin with the specified `LEFT_COMMIT` and `RIGHT_COMMIT=`. 
+The plugin will do everything else. 
+RefMerge performs the following steps: 
 
 1. Detects refactorings on the left and right branch with RefactoringMiner.
 
