@@ -22,11 +22,13 @@ You can either build the RefactoringMiner or download it automatically as [Maven
 ### 1. Clone and build RefactoringMiner 
 Use `Git Clone https://github.com/tsantalis/RefactoringMiner.git` to clone RefactoringMiner.
 Check out the required version with `git fetch --tags` and `git checkout tags/2.0.1` (see version requirement above or in the `build.gradle` file).
-Then build RefactoringMiner with `./gradlew distzip`. It will be under build/distributions.
+Then build RefactoringMiner with `./gradlew distzip`.
+It will be under build/distributions.
 
 ### 2. Add RefactoringMiner to your local maven repository
-You will need to add RefactoringMiner to your local maven repository to use it in the build.gradle. You can use `mvn install:install-file -Dfile=<path-to-file> -DgroupId=com.github.tsantalis -DartifactId=refactoring-miner -Dversion=2.1.0 -Dpackaging=zip -DgeneratePom=true`
-to add it to your local maven repository. You can verify that it's been installed  by checking the path `/home/username/.m2/repository/org/refactoringminer`.
+You will need to add RefactoringMiner to your local maven repository to use it in the build.gradle. 
+You can use `mvn install:install-file -Dfile=<path-to-file> -DgroupId=com.github.tsantalis -DartifactId=refactoring-miner -Dversion=2.1.0 -Dpackaging=zip -DgeneratePom=true`
+to add it to your local maven repository. You can verify that it's been installed by checking the path `/home/username/.m2/repository/org/refactoringminer`.
 
 ## How to run
 
@@ -35,7 +37,7 @@ From [download and install IntelliJ IDE](https://www.jetbrains.com/de-de/idea/do
 
 ### 3. Build the project
 
-- Requires (Java 17)[https://adoptium.net/de/temurin/releases/?version=17].
+- Requires [Java 17](https://adoptium.net/de/temurin/releases/?version=17).
 
 Open the repository folder in the IntelliJ IDE.
 Click on Gradle build tab (icon right-side) in the IntelliJ IDE.
