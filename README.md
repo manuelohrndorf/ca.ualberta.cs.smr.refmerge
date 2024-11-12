@@ -57,7 +57,7 @@ Then navigate to `RefMerge > Tasks > intellij` and right-click `runIde`.
 From the menu select `Run...` or `Debug...` to start a second IntelliJ instance.
 In debugging mode you can set break points in the source code.
 
-When it's running, click the `Tools` tab and select `RunRefMerge`. 
+When it's running, click the `Tools` menu and select `RunRefMerge` (first entry). 
 This will run the plugin with the specified `LEFT_COMMIT` and `RIGHT_COMMIT=`. 
 The plugin will do everything else. 
 RefMerge performs the following steps: 
