@@ -10,7 +10,7 @@ We consider the interactions between each pair of refactorings and how these int
 * Linux
 * git
 * Java 8
-* IntelliJ (Community Addition) Version 2020.1.2
+* IntelliJ (Community Addition) Version 2024.1
 
 ## (Optionally) Build RefactoringMiner
 
