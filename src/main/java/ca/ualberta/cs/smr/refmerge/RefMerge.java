@@ -9,6 +9,8 @@ import ca.ualberta.cs.smr.refmerge.utils.Utils;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 
+import com.intellij.openapi.project.DumbAwareRunnable;
+import com.intellij.openapi.project.DumbService;
 import git4idea.repo.GitRepository;
 import git4idea.repo.GitRepositoryManager;
 import org.apache.commons.lang3.tuple.Pair;
@@ -122,7 +124,13 @@ public class RefMerge extends AnAction {
         Utils.reparsePsiFiles(project);
         Utils.dumbServiceHandler(project);
         System.out.println("Inverting right refactorings");
-        InvertRefactorings.invertRefactorings(rightRefs, project);
+        // InvertRefactorings.invertRefactorings(rightRefs, project);
+        try {
+            Utils.runWhenSmartWithFuture(project, () -> InvertRefactorings.invertRefactorings(rightRefs, project)).get(); // Blocks until the task is complete
+            System.out.println("Task completed successfully: Inverting right refactorings");
+        } catch (Exception e) {
+            System.err.println("Error while waiting for the task: Inverting right refactorings: " + e.getMessage());
+        }
 
         String rightUndoCommit = gitUtils.addAndCommit();
         gitUtils.checkout(leftCommit);
@@ -130,14 +138,22 @@ public class RefMerge extends AnAction {
         Utils.reparsePsiFiles(project);
         Utils.dumbServiceHandler(project);
         System.out.println("Inverting left refactorings");
-        InvertRefactorings.invertRefactorings(leftRefs, project);
+        // InvertRefactorings.invertRefactorings(leftRefs, project);
+        try {
+            Utils.runWhenSmartWithFuture(project, () -> InvertRefactorings.invertRefactorings(leftRefs, project)).get(); // Blocks until the task is complete
+            System.out.println("Task completed successfully: Inverting left refactorings");
+        } catch (Exception e) {
+            System.err.println("Error while waiting for the task: Inverting left refactorings: " + e.getMessage());
+        }
 
         gitUtils.addAndCommit();
         boolean isConflicting = gitUtils.merge(rightUndoCommit);
 
-        Utils.refreshVFS();
-        Utils.reparsePsiFiles(project);
-        Utils.dumbServiceHandler(project);
+        Utils.runWhenSmartWithFuture(project, () -> {
+                    Utils.refreshVFS();
+                    Utils.reparsePsiFiles(project);
+                    Utils.dumbServiceHandler(project);
+                });
 
         // Check if any of the refactorings are conflicting or have ordering dependencies
         System.out.println("Detecting refactoring conflicts");
@@ -156,16 +172,30 @@ public class RefMerge extends AnAction {
         if(isConflicting) {
             List<String> conflictingFilePaths = gitUtils.getConflictingFilePaths();
             for(String conflictingFilePath : conflictingFilePaths) {
-                Utils utils = new Utils(project);
-                utils.removeRefactoringsInConflictingFile(conflictingFilePath, refactorings);
-
+                try {
+                    // FIXME: Deadlock!?
+                    //Utils.runWhenSmartWithFuture(project, () -> {
+                        Utils utils = new Utils(project);
+                        String absoluteConflictingFilePath = project.getBasePath() + "/" + conflictingFilePath;
+                        utils.removeRefactoringsInConflictingFile(conflictingFilePath, absoluteConflictingFilePath, refactorings);
+                    //}).get(); // Blocks until the task is complete
+                    System.out.println("Task completed successfully.");
+                } catch (Exception e) {
+                    System.err.println("Error while waiting for the task: " + e.getMessage());
+                }
             }
         }
 
         // Combine the lists so we can perform all the refactorings on the merged project
         // Replay all of the refactorings
         System.out.println("Replaying refactorings");
-        ReplayRefactorings.replayRefactorings(pair.getRight(), project);
+        // ReplayRefactorings.replayRefactorings(pair.getRight(), project);
+        try {
+            Utils.runWhenSmartWithFuture(project, () -> ReplayRefactorings.replayRefactorings(pair.getRight(), project)).get(); // Blocks until the task is complete
+            System.out.println("Task completed successfully: Replaying refactorings");
+        } catch (Exception e) {
+            System.err.println("Error while waiting for the task: Replaying refactorings: " + e.getMessage());
+        }
 
         return pair.getLeft();
 

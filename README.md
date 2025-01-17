@@ -20,8 +20,8 @@ You can either build the RefactoringMiner or download it automatically as [Maven
 - Requires to [install Maven](https://maven.apache.org/download.cgi) and add it's `bin` folder to the OS's `PATH` variable.
 
 ### 1. Clone and build RefactoringMiner 
-Use `Git Clone https://github.com/tsantalis/RefactoringMiner.git` to clone RefactoringMiner.
-Check out the required version with `git fetch --tags` and `git checkout tags/2.0.1` (see version requirement above or in the `build.gradle` file).
+Use `git clone https://github.com/tsantalis/RefactoringMiner.git` to clone RefactoringMiner.
+Check out the required version with `git fetch --tags` and `git checkout tags/2.1.0` (see version requirement above or in the `build.gradle` file).
 Then build RefactoringMiner with `./gradlew distzip`.
 It will be under build/distributions.
 
