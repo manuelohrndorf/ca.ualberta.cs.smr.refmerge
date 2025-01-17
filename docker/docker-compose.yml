@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  ubuntu-dev:
+    build: .
+    container_name: dev-container
+    ports:
+      - "5901:5901" # VNC access
+      - "3001:3001" # HTTPS access
+      - "3389:3389" # XRDP access
+    security_opt:
+      - seccomp=unconfined # modern GUI desktop apps have issues with the latest Docker and syscall compatibility
+    volumes:
+      - dev_data:/config
+    environment:
+      - PUID=1000 # Adjust as needed for your host
+      - PGID=1000
+      - TZ=Etc/UTC
+      - TITLE=dev-container #optional
+      - VNC_RESOLUTION=1920x1080
+      - VNC_PASSWORD=nUuuDn*R6Q3$9^gzn0gR # set your own password
+    shm_size: "1gb" # we set this to 1 gig to prevent modern web browsers from crashing
+
+volumes:
+  dev_data:
