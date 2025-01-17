@@ -204,6 +204,35 @@ public class Utils {
         }
 
     }
+
+    /**
+     * Converts a relative file path to an absolute path based on the given base path.
+     * If the path is already absolute, it returns the path unchanged.
+     *
+     * @param filePath The file path to check and convert.
+     * @param basePath The base path to use for conversion if the file path is relative.
+     * @return The absolute file path.
+     * @throws IllegalArgumentException If basePath is not an absolute path.
+     */
+    public static String makeAbsolutePath(String filePath, String basePath) {
+        // Validate that basePath is absolute
+        File base = new File(basePath);
+        if (!base.isAbsolute()) {
+            throw new IllegalArgumentException("Base path must be an absolute path.");
+        }
+
+        // Create a File object for the filePath
+        File file = new File(filePath);
+
+        // If the file path is already absolute, return it as is
+        if (file.isAbsolute()) {
+            return file.getAbsolutePath();
+        }
+
+        // Otherwise, resolve the relative path against the base path
+        return new File(base, filePath).getAbsolutePath();
+    }
+
     /*
      * Get the module that the virtual file is in.
      */
@@ -489,7 +518,7 @@ public class Utils {
     }
 
     private List<Pair<Integer, Integer>> getConflictingRegions(String path) {
-        File file = new File(path);
+        File file = new File(makeAbsolutePath(path, project.getBasePath()));
         List<Pair<Integer, Integer>> conflictingRegions = new ArrayList<>();
         int startLine = 0;
         int endLine = 0;

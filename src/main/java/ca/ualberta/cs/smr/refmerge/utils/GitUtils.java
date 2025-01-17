@@ -97,7 +97,13 @@ public class GitUtils {
         AtomicReference<GitCommandResult> gitCommandResult = new AtomicReference<>();
         Thread thread = new Thread(() -> {
             GitLineHandler lineHandler = new GitLineHandler(project, repo.getRoot(), GitCommand.MERGE);
-            lineHandler.addParameters(rightCommit, "--no-commit");
+            // NOTE: IntelliJ may reformat leading whitespaces during code modifications, e.g., replacing tabs with spaces while moving an operation.
+            //   Detection of 'existing file indent' (File > Settings > Editor > Code Style)  requires existing content, e.g., for moving a method, it requires another method in the target class (an indented comment is not enough).
+            //   Also see settings File > Settings > Editor > Code Style > Java to change from spaces to tabs (with smart tabs, i.e., tries to detect spaces).
+            // WORKAROUND: Ignore changing of spaces/tabs during the diff of a  merge:
+            //   Xignore-space-change: This tells Git to treat spaces and tabs as equivalent, ignoring changes in their quantity.
+            //   Xignore-all-space: This tells Git to completely ignore all whitespace when comparing lines.
+            lineHandler.addParameters(rightCommit, "--no-commit", "-Xignore-space-change");
             gitCommandResult.set(Git.getInstance().runCommand(lineHandler));
         });
         thread.start();
@@ -354,6 +360,10 @@ class DoGitCommit implements Runnable {
     @Override
     public void run() {
         GitLineHandler lineHandler = new GitLineHandler(project, repo.getRoot(), GitCommand.COMMIT);
+        // Set the author for the commit
+        String authorName = "Anonymous";
+        String authorEmail = "anonymous@example.com";
+        lineHandler.addParameters("--author", authorName + " <" + authorEmail + ">");
         // Add message to commit to clearly show it's RefMerge step
         lineHandler.addParameters("-m", "RefMerge");
         GitCommandResult result = Git.getInstance().runCommand(lineHandler);
