@@ -4,24 +4,15 @@ FROM lscr.io/linuxserver/webtop:ubuntu-kde
 
 ##### KASM-VNC RELATED SETTINGS #####
 
-# VNC port
-EXPOSE 5901
 # HTTP port (not recommended due to frequent desktop crashes (segmentation error))
-EXPOSE 6901
+EXPOSE 3000
 # HTTPS port (desktop crashes (segmentation error) sometimes on first connect, just F5 refresh the browser page)
 EXPOSE 3001
-# RDP port
-EXPOSE 3389
 
 # Set environment variables for user ID (e.g., USER $PUID), group ID, home directory
 ENV PUID=1000
 ENV PGID=1000
 ENV HOME=/config
-
-# Avoid desktop crashes
-RUN mkdir -p /tmp/.X11-unix
-RUN chown root:root /tmp/.X11-unix && \
-    chmod 1777 /tmp/.X11-unix
 
 ##### INSTALL PACKAGES #####
 
@@ -51,13 +42,11 @@ RUN wget https://download.jetbrains.com/idea/ideaIC-2020.1.2.tar.gz -O /tmp/idea
 RUN mkdir -p /config/git
 
 # Clone repository: RefactoringMiner
-RUN git clone --branch 2.1.0 https://github.com/tsantalis/RefactoringMiner.git /config/git/com.github.tsantalis.refactoringminer
-WORKDIR /config/git/com.github.tsantalis.refactoringminer
-
-# Patch: RefactoringMiner
-COPY com.github.tsantalis.refactoringminer/build.gradle /config/git/com.github.tsantalis.refactoringminer/
+# RUN git clone --branch 2.1.0 https://github.com/tsantalis/RefactoringMiner.git /config/git/com.github.tsantalis.refactoringminer
+RUN git clone --branch 2.1.0 https://github.com/manuelohrndorf/com.github.tsantalis.refactoringminer.git /config/git/com.github.tsantalis.refactoringminer
 
 # Build repository: RefactoringMiner
+WORKDIR /config/git/com.github.tsantalis.refactoringminer
 RUN ./gradlew jar
 
 # Install RefactoringMiner in Maven as local libarary
@@ -68,13 +57,8 @@ USER root
 ##### REF MERGE #####
 
 # Clone repository: RefMerge
-RUN git clone https://github.com/ualberta-smr/RefMerge.git /config/git/ca.ualberta.cs.smr.refmerge
-WORKDIR /config/git/ca.ualberta.cs.smr.refmerge
-
-# Patch: RefMerge
-COPY ca.ualberta.cs.smr.refmerge/build.gradle /config/git/ca.ualberta.cs.smr.refmerge/
-COPY ca.ualberta.cs.smr.refmerge/src/main/java/ca/ualberta/cs/smr/refmerge/utils/GitUtils.java /config/git/ca.ualberta.cs.smr.refmerge/src/main/java/ca/ualberta/cs/smr/refmerge//utils/
-COPY ca.ualberta.cs.smr.refmerge/src/main/java/ca/ualberta/cs/smr/refmerge/utils/Utils.java /config/git/ca.ualberta.cs.smr.refmerge/src/main/java/ca/ualberta/cs/smr/refmerge/utils/
+# RUN git clone https://github.com/ualberta-smr/RefMerge.git /config/git/ca.ualberta.cs.smr.refmerge
+RUN git clone --branch IntelliJ2020.1.2 https://github.com/manuelohrndorf/ca.ualberta.cs.smr.refmerge.git /config/git/ca.ualberta.cs.smr.refmerge
 
 # Setup Git identity for RefMerge
 RUN git config --global user.email "abc@example.com"
@@ -83,6 +67,9 @@ RUN git config --global user.name "abc"
 ##### COPY SAMPLE DATA #####
 
 COPY ca.ualberta.cs.smr.refmerge.samples/ /config/git/ca.ualberta.cs.smr.refmerge.samples/
+WORKDIR /config/git/ca.ualberta.cs.smr.refmerge.samples/move_and_modify_method
+RUN chmod +x create_git_repo.sh
+RUN ./create_git_repo.sh
 
 ##### CREATE DESKTOP SHORTCUTS #####
 
@@ -121,3 +108,10 @@ RUN chown -R $PUID:$PGID /config
 USER $PUID
 RUN chmod -R u+rw /config
 USER root
+
+##### KASM-VNC RELATED SETTINGS: AVOID DESKTOP CRASHES #####
+
+# create x11 tmp folder
+RUN mkdir -p /tmp/.X11-unix
+RUN chown root:root /tmp/.X11-unix && \
+    chmod 1777 /tmp/.X11-unix
