@@ -10,7 +10,9 @@ REPO_NAME="move_and_modify_method.repository"
 mkdir "$REPO_NAME"
 cd "$REPO_NAME" || exit 1
 git init
-git branch -m main
+
+# Ensure the branch is 'main', and rename if necessary
+git branch -m master main || echo "Branch already named main."
 
 # Copy the folder into the repository
 cp -r "$PATH_MAIN_1/." .
