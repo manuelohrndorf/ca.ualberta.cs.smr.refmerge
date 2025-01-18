@@ -11,9 +11,6 @@ mkdir "$REPO_NAME"
 cd "$REPO_NAME" || exit 1
 git init
 
-# Ensure the branch is 'main', and rename if necessary
-git branch -m master main || echo "Branch already named main."
-
 # Copy the folder into the repository
 cp -r "$PATH_MAIN_1/." .
 
@@ -53,6 +50,9 @@ git commit -m "edit on branchA"
 # Get the latest commit hash and write it to a file
 RIGHT_COMMIT=$(git rev-parse HEAD)
 echo "LEFT_COMMIT=$LEFT_COMMIT;RIGHT_COMMIT=$RIGHT_COMMIT;" > "../${REPO_NAME}.txt"
+
+# Ensure the branch is 'main', and rename if necessary
+git branch -m master main || echo "Branch already named main."
 
 # Switch to main
 git checkout main
