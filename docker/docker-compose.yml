@@ -17,12 +17,6 @@ services:
       - TZ=Europe/Zurich # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List
       - TITLE=Dev-RefMerge # the page title displayed on the web browser
       # - PASSWORD=nUuuDn*R6Q3$9^gzn0gR # HTTP Basic auth password, abc is default. If unset there will be no auth
-      # AVOID DESKTOP CRASHES
-      - KWIN_COMPOSE=0 # disable hardware acceleration
-      - KDE_SKIP_OPENGL=1 # disable OpenGL acceleration
-      - LIBGL_ALWAYS_SOFTWARE=1 # forces software rendering for OpenGL
-      - KDE_NO_HARDWARE_ACCELERATION=1 # disables hardware acceleration in the KDE environment
-      - QT_GRAPHICSSYSTEM=native # forces Qt to use the native graphics system, avoiding GPU usage
     shm_size: "1gb" # we set this to 1 gig to prevent modern web browsers from crashing
 
 volumes:

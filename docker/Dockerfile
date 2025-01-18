@@ -66,7 +66,7 @@ RUN git config --global user.name "abc"
 
 ##### COPY SAMPLE DATA #####
 
-COPY ca.ualberta.cs.smr.refmerge.samples/ /config/git/ca.ualberta.cs.smr.refmerge.samples/
+RUN cp -r /config/git/ca.ualberta.cs.smr.refmerge/docker/ca.ualberta.cs.smr.refmerge.samples/ /config/git/ca.ualberta.cs.smr.refmerge.samples/
 WORKDIR /config/git/ca.ualberta.cs.smr.refmerge.samples/move_and_modify_method
 RUN chmod +x create_git_repo.sh
 RUN ./create_git_repo.sh
