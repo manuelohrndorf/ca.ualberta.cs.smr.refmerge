@@ -54,7 +54,15 @@ def write_html_file(root_directory, output_path):
         f.write(html_content)
 
 if __name__ == "__main__":
+
     root_directory = './move_and_modify_method/move_and_modify_method.repository_plain'  # The root directory to report
     output_file = "./move_and_modify_method/report.html"  # The name of the output HTML file
+
+    #root_directory = './pull_up_and_move_method/pull_up_and_move_method.repository_plain'  # The root directory to report
+    #output_file = "./pull_up_and_move_method/report.html"  # The name of the output HTML file
+
+    #root_directory = './pull_up_and_move_method_conflict/pull_up_and_move_method_conflict.repository_plain'  # The root directory to report
+    #output_file = "./pull_up_and_move_method_conflict/report.html"  # The name of the output HTML file
+
     write_html_file(root_directory, output_file)
     print(f"HTML file generated: {output_file}")

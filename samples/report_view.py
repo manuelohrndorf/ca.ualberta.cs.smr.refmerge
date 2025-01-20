@@ -76,5 +76,10 @@ def monitor_directory():
 
 if __name__ == "__main__":
     ROOT_DIRECTORY = './move_and_modify_method/move_and_modify_method.repository/src'
+
+    #ROOT_DIRECTORY = './pull_up_and_move_method/pull_up_and_move_method.repository/src'
+
+    #ROOT_DIRECTORY = './pull_up_and_move_method_conflict/pull_up_and_move_method_conflict.repository/src'
+
     threading.Thread(target=monitor_directory, daemon=True).start()
     socketio.run(app, host="127.0.0.1", port=5000)
