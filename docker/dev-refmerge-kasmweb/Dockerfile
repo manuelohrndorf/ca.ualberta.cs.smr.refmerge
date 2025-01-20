@@ -38,6 +38,7 @@ RUN apt-get update && \
 		git \
 		openjdk-8-jdk \
 		maven \
+		python3-full \
 		wget \
 		unzip && \
 	echo "INSTALL KDE DESKTOP" && \
@@ -118,10 +119,23 @@ RUN git config --global user.email "you@example.com"
 RUN git config --global user.name "Your Name"
 RUN git config --global init.defaultBranch main
 
-##### COPY SAMPLE DATA #####
+##### SAMPLE DATA #####
 
-RUN cp -r $HOME/git/ca.ualberta.cs.smr.refmerge/docker/ca.ualberta.cs.smr.refmerge.samples/ $HOME/git/ca.ualberta.cs.smr.refmerge.samples/
-WORKDIR $HOME/git/ca.ualberta.cs.smr.refmerge.samples/move_and_modify_method
+# Install Python packages for report_view.py
+WORKDIR $HOME/git/ca.ualberta.cs.smr.refmerge/samples
+RUN python3 -m venv /opt/venv && \
+    /opt/venv/bin/pip install --no-cache-dir -r requirements.txt
+ENV PATH="/opt/venv/bin:$PATH"
+
+WORKDIR $HOME/git/ca.ualberta.cs.smr.refmerge/samples/move_and_modify_method
+RUN chmod -R +x create_git_repo.sh
+RUN ./create_git_repo.sh
+
+WORKDIR $HOME/git/ca.ualberta.cs.smr.refmerge/samples/pull_up_and_move_method
+RUN chmod -R +x create_git_repo.sh
+RUN ./create_git_repo.sh
+
+WORKDIR $HOME/git/ca.ualberta.cs.smr.refmerge/samples/pull_up_and_move_method_conflict
 RUN chmod -R +x create_git_repo.sh
 RUN ./create_git_repo.sh
 
