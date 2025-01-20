@@ -3,7 +3,7 @@ services:
     build: .
     container_name: dev-container-refmerge
     ports:
-      - "3001:6901" # HTTPS access: https://localhost:3001/
+      - "127.0.0.1:3001:6901" # HTTPS access: https://localhost:3001/
     security_opt:
       - seccomp=unconfined # modern GUI desktop apps have issues with the latest Docker and syscall compatibility
     volumes:
