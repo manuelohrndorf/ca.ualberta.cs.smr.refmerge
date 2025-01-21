@@ -5,6 +5,8 @@
 FROM kasmweb/ubuntu-noble-desktop:1.16.0
 USER root
 
+##### PORTS #####
+
 # HTTPS VNC
 EXPOSE 6901
 

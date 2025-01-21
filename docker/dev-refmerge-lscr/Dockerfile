@@ -1,8 +1,22 @@
 # https://docs.linuxserver.io/images/docker-webtop/
 # https://github.com/linuxserver/docker-webtop
+
+# Latest:
 # FIXME: segmentation fault crashes
+#   https://github.com/kasmtech/KasmVNC/blob/master/DEBUGGING.md
+#   https://kasmweb.com/docs/latest/guide/troubleshooting/advanced_connection_troubleshooting.html
 # FROM lscr.io/linuxserver/webtop:ubuntu-kde
-FROM lscr.io/linuxserver/webtop:ubuntu-kde-af041999-ls70
+
+# 2025-01-14:
+# https://github.com/linuxserver/docker-webtop/releases/tag/ubuntu-kde-af041999-ls70
+# FIXME: segmentation fault crashes
+# FROM lscr.io/linuxserver/webtop:ubuntu-kde-af041999-ls70
+
+# 2024-08-20:
+# https://github.com/linuxserver/docker-webtop/releases/tag/ubuntu-kde-a2d04335-ls49
+FROM lscr.io/linuxserver/webtop:ubuntu-kde-a2d04335-ls49
+
+##### PORTS #####
 
 # HTTP VNC
 EXPOSE 3000
