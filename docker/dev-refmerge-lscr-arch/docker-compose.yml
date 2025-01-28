@@ -1,7 +1,7 @@
 services:
   dev-container-refmerge:
     build:
-      context: ./docker/dev-refmerge-lscr-arch
+      context: .
       dockerfile: Dockerfile
     container_name: dev-container-refmerge
     ports:
