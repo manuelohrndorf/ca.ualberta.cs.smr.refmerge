@@ -1,7 +1,8 @@
 services:
   ubuntu-dev-refmerge:
-    build: .
-    dockerfile: Dockerfile
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: dev-container-refmerge
     ports:
       - "127.0.0.1:3000:3000" # HTTP access: https://localhost:3000/
