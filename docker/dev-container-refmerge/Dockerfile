@@ -144,6 +144,7 @@ Categories=Development;\n" > $HOME/Desktop/intellij-refmerge.desktop && \
     chmod +x $HOME/Desktop/intellij-refmerge.desktop
 
 ##### AUTOSTART RUSTDESK #####
+## Please note that this makes the container's desktop also remotely accessible via an ID and password!
 #
 ## RustDesk
 #RUN mkdir -p $HOME/.config/autostart
@@ -154,23 +155,23 @@ Categories=Development;\n" > $HOME/Desktop/intellij-refmerge.desktop && \
 #StartupNotify=false\n\
 #X-GNOME-Autostart-enabled=true\n" > $HOME/.config/autostart/rustdesk.desktop && \
 #    chmod +x $HOME/.config/autostart/rustdesk.desktop
-#
-## Add resolution scripts	
-#RUN mkdir -p $HOME/.config/my-scripts
-#COPY Dockerfiles/add_resolution.sh $HOME/.config/my-scripts/add_resolution.sh
-#COPY Dockerfiles/add_resolutions.sh $HOME/.config/my-scripts/add_resolutions.sh
-#RUN chmod +x $HOME/.config/my-scripts/add_resolution.sh && \
-#    chmod +x $HOME/.config/my-scripts/add_resolutions.sh && \
-#    dos2unix $HOME/.config/my-scripts/add_resolution.sh && \
-#	dos2unix $HOME/.config/my-scripts/add_resolutions.sh
-#RUN printf "[Desktop Entry]\n\
-#Type=Application\n\
-#Name=Resolution\n\
-#Exec=bash $HOME/.config/my-scripts/add_resolutions.sh\n\
-#StartupNotify=false\n\
-#X-GNOME-Autostart-enabled=true\n" > $HOME/.config/autostart/resolutions.desktop && \
-#    chmod +x $HOME/.config/autostart/resolutions.desktop
-#
+
+# Add resolution scripts	
+RUN mkdir -p $HOME/.config/my-scripts
+COPY Dockerfiles/add_resolution.sh $HOME/.config/my-scripts/add_resolution.sh
+COPY Dockerfiles/add_resolutions.sh $HOME/.config/my-scripts/add_resolutions.sh
+RUN chmod +x $HOME/.config/my-scripts/add_resolution.sh && \
+    chmod +x $HOME/.config/my-scripts/add_resolutions.sh && \
+    dos2unix $HOME/.config/my-scripts/add_resolution.sh && \
+	dos2unix $HOME/.config/my-scripts/add_resolutions.sh
+RUN printf "[Desktop Entry]\n\
+Type=Application\n\
+Name=Resolution\n\
+Exec=bash $HOME/.config/my-scripts/add_resolutions.sh\n\
+StartupNotify=false\n\
+X-GNOME-Autostart-enabled=true\n" > $HOME/.config/autostart/resolutions.desktop && \
+    chmod +x $HOME/.config/autostart/resolutions.desktop
+
 ##### MOVE: /home/kasm-user > /config #####
 
 # Workaround: during Docker build, e.g., Maven, uses /home/kasm-user but our abc user home directory is /config
