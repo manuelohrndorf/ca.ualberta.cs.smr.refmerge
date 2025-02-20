@@ -50,6 +50,60 @@ RUN apt-get update && apt-get install -y \
 	apt-get clean && \
 	rm -rf /var/lib/apt/lists/*
 
+# Install IntelliJ IDEA Community Edition 2020.1.2
+RUN wget https://download.jetbrains.com/idea/ideaIC-2020.1.2.tar.gz -O /tmp/ideaIC.tar.gz && \
+    tar -xzf /tmp/ideaIC.tar.gz -C /opt/ && \
+    rm /tmp/ideaIC.tar.gz && \
+    ln -s /opt/idea-IC-201.7846.76/bin/idea.sh /usr/local/bin/intellij
+
+##### REFACTORING MINER #####
+	
+# Prepare Git folder:
+RUN mkdir -p $HOME/git
+
+# Clone repository: RefactoringMiner
+# RUN git clone --branch 2.1.0 https://github.com/tsantalis/RefactoringMiner.git $HOME/git/com.github.tsantalis.refactoringminer
+RUN git clone --branch 2.1.0 https://github.com/manuelohrndorf/com.github.tsantalis.refactoringminer.git $HOME/git/com.github.tsantalis.refactoringminer
+
+# Build repository: RefactoringMiner
+WORKDIR $HOME/git/com.github.tsantalis.refactoringminer
+RUN ./gradlew jar
+
+# Install RefactoringMiner in Maven as local libarary
+USER $PUID
+RUN mvn install:install-file -Dfile=$HOME/git/com.github.tsantalis.refactoringminer/build/libs/RefactoringMiner-2.1.0.jar -DgroupId=com.github.tsantalis -DartifactId=refactoring-miner -Dversion=2.1.0 -Dpackaging=jar -DgeneratePom=true
+USER root
+
+##### REF MERGE #####
+
+# Clone repository: RefMerge
+# RUN git clone https://github.com/ualberta-smr/RefMerge.git $HOME/git/ca.ualberta.cs.smr.refmerge
+RUN git clone --branch IntelliJ2020.1.2 https://github.com/manuelohrndorf/ca.ualberta.cs.smr.refmerge.git $HOME/git/ca.ualberta.cs.smr.refmerge
+
+# Setup Git identity for RefMerge
+RUN git config --global user.email "you@example.com"
+RUN git config --global user.name "Your Name"
+RUN git config --global init.defaultBranch main
+
+##### SAMPLE DATA #####
+
+# Install Python packages for report_view.py
+WORKDIR $HOME/git/ca.ualberta.cs.smr.refmerge/samples
+RUN python3 -m venv /opt/venv && \
+    /opt/venv/bin/pip install --no-cache-dir -r requirements.txt
+ENV PATH="/opt/venv/bin:$PATH"
+
+WORKDIR $HOME/git/ca.ualberta.cs.smr.refmerge/samples/move_and_modify_method
+RUN chmod -R +x create_git_repo.sh
+RUN ./create_git_repo.sh
+
+WORKDIR $HOME/git/ca.ualberta.cs.smr.refmerge/samples/pull_up_and_move_method
+RUN chmod -R +x create_git_repo.sh
+RUN ./create_git_repo.sh
+
+WORKDIR $HOME/git/ca.ualberta.cs.smr.refmerge/samples/pull_up_and_move_method_conflict
+RUN chmod -R +x create_git_repo.sh
+RUN ./create_git_repo.sh
 
 ##### CREATE DESKTOP SHORTCUTS #####
 
@@ -89,34 +143,34 @@ Terminal=false\n\
 Categories=Development;\n" > $HOME/Desktop/intellij-refmerge.desktop && \
     chmod +x $HOME/Desktop/intellij-refmerge.desktop
 
-##### CREATE AUTOSTARTS #####
-
-# RustDesk
-RUN mkdir -p $HOME/.config/autostart
-RUN printf "[Desktop Entry]\n\
-Type=Application\n\
-Name=RustDesk\n\
-Exec=/usr/bin/rustdesk %%u\n\
-StartupNotify=false\n\
-X-GNOME-Autostart-enabled=true\n" > $HOME/.config/autostart/rustdesk.desktop && \
-    chmod +x $HOME/.config/autostart/rustdesk.desktop
-
-# Add resolution scripts	
-RUN mkdir -p $HOME/.config/my-scripts
-COPY Dockerfiles/add_resolution.sh $HOME/.config/my-scripts/add_resolution.sh
-COPY Dockerfiles/add_resolutions.sh $HOME/.config/my-scripts/add_resolutions.sh
-RUN chmod +x $HOME/.config/my-scripts/add_resolution.sh && \
-    chmod +x $HOME/.config/my-scripts/add_resolutions.sh && \
-    dos2unix $HOME/.config/my-scripts/add_resolution.sh && \
-	dos2unix $HOME/.config/my-scripts/add_resolutions.sh
-RUN printf "[Desktop Entry]\n\
-Type=Application\n\
-Name=Resolution\n\
-Exec=bash $HOME/.config/my-scripts/add_resolutions.sh\n\
-StartupNotify=false\n\
-X-GNOME-Autostart-enabled=true\n" > $HOME/.config/autostart/resolutions.desktop && \
-    chmod +x $HOME/.config/autostart/resolutions.desktop
-
+##### AUTOSTART RUSTDESK #####
+#
+## RustDesk
+#RUN mkdir -p $HOME/.config/autostart
+#RUN printf "[Desktop Entry]\n\
+#Type=Application\n\
+#Name=RustDesk\n\
+#Exec=/usr/bin/rustdesk %%u\n\
+#StartupNotify=false\n\
+#X-GNOME-Autostart-enabled=true\n" > $HOME/.config/autostart/rustdesk.desktop && \
+#    chmod +x $HOME/.config/autostart/rustdesk.desktop
+#
+## Add resolution scripts	
+#RUN mkdir -p $HOME/.config/my-scripts
+#COPY Dockerfiles/add_resolution.sh $HOME/.config/my-scripts/add_resolution.sh
+#COPY Dockerfiles/add_resolutions.sh $HOME/.config/my-scripts/add_resolutions.sh
+#RUN chmod +x $HOME/.config/my-scripts/add_resolution.sh && \
+#    chmod +x $HOME/.config/my-scripts/add_resolutions.sh && \
+#    dos2unix $HOME/.config/my-scripts/add_resolution.sh && \
+#	dos2unix $HOME/.config/my-scripts/add_resolutions.sh
+#RUN printf "[Desktop Entry]\n\
+#Type=Application\n\
+#Name=Resolution\n\
+#Exec=bash $HOME/.config/my-scripts/add_resolutions.sh\n\
+#StartupNotify=false\n\
+#X-GNOME-Autostart-enabled=true\n" > $HOME/.config/autostart/resolutions.desktop && \
+#    chmod +x $HOME/.config/autostart/resolutions.desktop
+#
 ##### MOVE: /home/kasm-user > /config #####
 
 # Workaround: during Docker build, e.g., Maven, uses /home/kasm-user but our abc user home directory is /config
