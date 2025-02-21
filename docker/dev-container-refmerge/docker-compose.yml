@@ -4,7 +4,8 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: dev-container-refmerge
-     # mem_limit: 10g
+    # privileged: true
+    # mem_limit: 10g
     ports:
       - "127.0.0.1:3000:3000" # HTTP access: https://localhost:3000/
       - "127.0.0.1:3001:3001" # HTTPS access: https://localhost:3001/

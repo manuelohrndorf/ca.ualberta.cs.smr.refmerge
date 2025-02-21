@@ -40,11 +40,31 @@ Note, to use it remotely you would have to remove ```127.0.0.1``` from the docke
 Adjusting the size of the browser window will set the according screen resolution of the desktop.
 In the browser window in the left (initially collapsed) side panel, you can also edit settings such as the streaming quality.
 
-```Issue:``` Please note, under *Windows Docker WSL* , currently, there seems to be an issue with memory spikes that can cause crashes of the desktop session.
-It seems to be mostly stable if the streaming settings do not exceed *medium streaming setting at FHD 1920 × 1080 pixel, 24 FPS*.
-Switching to [Docker Hyper-V](https://forums.docker.com/t/make-hyper-v-default-engine-on-docker-desktop-for-windows-installation/120377/2) also seems to help; however, that is less performant than WSL.
-(For testing, open something that causes frequent screen changes, e.g, [animated gifs](https://tenor.com/) then watch the [Docker stats](https://www.docker.com/blog/how-to-monitor-container-memory-and-cpu-usage-in-docker-desktop/) graphs in the Docker desktop UI.)
+#### ```Windowa Issue:``` Clock Synchronization
+
+TLDR; If you use *Windows Docker with WSL* make sure your clock is correctly, recently synchronized. 
+Otherwise, KasmVNC can cause memory spikes that may crash the desktop session.
+Run "synchronize now"  in the settings app (Time and Language > Date and Time) or run```w32tm /resync``` in terminal (administrator).
+You can also automate this using the script below.
+Lowering the streaming quality (medium streaming setting at FHD 1920 × 1080 pixel, 24 FPS) can also help. 
 Alternatively, use RustDesk as described below.
+
+1. Create a new file: C:\Scripts\sync-clock.vbs
+   ```
+   Set objShell = CreateObject("WScript.Shell")
+   objShell.Run "powershell.exe -ExecutionPolicy Bypass -Command ""net start w32time; w32tm /resync""", 0, False
+   ```
+1. Windows + R: taskschd.msc
+1. Create Task... (not Create Basic Task...)
+1. General -> Name: Sync-Clock
+1. Select Run with highest privileges.
+1. Triggers -> New...
+   - On workstation unlock
+1. Triggers -> New...  
+   - On a schedule (One time) -> Advanced settings: Repeat every 1 hour for a duration of Indefinitely
+1. Action -> New...
+   - Program: wscript.exe
+   - Arguments: C:\Scripts\sync-clock.vbs
 
 ### RustDesk:
 
